@@ -11,6 +11,14 @@ import { morningPrompt, eveningPrompt } from '@/lib/prompts';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const date = searchParams.get('date') ?? '';
+  const type = (searchParams.get('type') ?? 'morning') as 'morning' | 'evening';
+  const checkin = getCheckinByDate(date, type);
+  return Response.json({ checkin: checkin ?? null });
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
